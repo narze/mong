@@ -13,6 +13,16 @@ RSpec.describe Mong do
     end
   end
 
+  shared_examples 'error' do |input, result|
+    context "when time is #{input}" do
+      let(:time) { input }
+
+      it "raise Mong::ParseError" do
+        expect { subject }.to raise_error(Mong::ParseError)
+      end
+    end
+  end
+
   describe "#parse_minute" do
     subject { Mong.parse_minute(time) }
 
@@ -20,9 +30,8 @@ RSpec.describe Mong do
     it_behaves_like 'default', "0", "ศูนย์นาที"
     it_behaves_like 'default', "01", "หนึ่งนาที"
     it_behaves_like 'default', "15", "สิบห้านาที"
-    it_behaves_like 'default', "-1", false
-    it_behaves_like 'default', "60", false
-    # it_behaves_like 'default', "abc", false
+    it_behaves_like 'error', "-1"
+    it_behaves_like 'error', "60"
   end
 
   describe "#parse_hour" do
@@ -34,8 +43,8 @@ RSpec.describe Mong do
     it_behaves_like 'default', "0", "เที่ยงคืน"
     it_behaves_like 'default', "01", "ตีหนึ่ง"
     it_behaves_like 'default', "15", "บ่ายสามโมง"
-    it_behaves_like 'default', "-1", false
-    it_behaves_like 'default', "24", false
+    it_behaves_like 'error', "-1"
+    it_behaves_like 'error', "24"
   end
 
   describe '#parse_hour_and_minute' do
@@ -43,8 +52,8 @@ RSpec.describe Mong do
 
     it_behaves_like 'default', "03:25", "ตีสามยี่สิบห้านาที"
     it_behaves_like 'default', "01:00", "ตีหนึ่งศูนย์นาที"
-    it_behaves_like 'default', "24:00", false
-    it_behaves_like 'default', "01:60", false
+    it_behaves_like 'error', "24:00"
+    it_behaves_like 'error', "01:60"
   end
 
   describe '#parse' do
